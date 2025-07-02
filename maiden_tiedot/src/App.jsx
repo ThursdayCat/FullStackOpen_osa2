@@ -1,84 +1,12 @@
 import { useState, useEffect } from 'react'
-import flag from './assets/react.svg'
 import axios from 'axios'
 const api_key = import.meta.env.VITE_WEATHER_KEY
 
-const Info = (props) => {
-  //console.log(props)
-  return(
-    <div>{props.property} {props.value} {props.unit}</div>
-  )
-}
+import Search from './components/Search'
+import Country from './components/Country'
 
-//odottaa tulostettavia asioita taulukkona objekteja joilla kentät key ja prop 
-// esim [{key:'fin', prop:'Finnis'}, {key:'swe', prop:'Swdish} ]
-const List = ({ listItem, button}) => {
-  //console.log(listItem)
-  return(
-    <ul>
-      {listItem.map(listItem => <li key={listItem.key}> {listItem.prop} {button}</li>)}
-    </ul>
-  )
-}
 
-const Filter = (props) => {
-  return(
-    <div>
-      Find countries <input value={props.search} onChange={props.handle}/>
-    </div>
-  )
-} 
 
-const Weather = ({ country, weather }) => {
-  console.log('weather', weather)
-  if (weather !== null) {
-    return (
-        <div>
-          <h2>Weather in {country.capital}</h2>
-          <img src = {`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}/>
-          <p>Temperature: {weather.main.temp} Celsius</p>
-          <p>Wind: {weather.wind.speed} m/s</p>
-        </div>
-    )
-  }
-}
-
-const Search = (props) => {
-  //console.log(props)
-  if (props.itemsToShow.length > props.maxItems) {
-    return (
-      <div>
-        <Filter search = {props.search} handle = {props.handle} />
-        Too many matches, specify more letters.
-      </div>
-    )
-  }
-  return(
-    <div>
-      <Filter search = {props.search} handle = {props.handle} />
-      {props.listItem.map(listItem => 
-      <div key={listItem.key}> {listItem.prop} {<button onClick={() => props.handleClick(listItem.prop)}>Show</button>}</div>)}
-    </div>
-  )
-}
-
-const Country = ({countries, weather}) => {
-  console.log('country component',countries)
-  //console.log(Object.keys(countries[0].languages))
-  if (countries !== null) {
-    return (
-      <div>
-        <h1>{countries.name.common}</h1>
-        <Info property = {'Capital:'} value = {countries.capital}/>
-        <Info property ={'Area:'} value = {countries.area} unit={'km^2'}/>
-        <h2>Languages</h2>
-        <List listItem = {Object.keys(countries.languages).map((key) => ({key: key, prop: countries.languages[key]}))}/>
-        <img src = {countries.flags.png}/>
-        <Weather country={countries} weather={weather}/>
-      </div>
-    )
-  }
-}
 
 
 const App = () => {
@@ -139,17 +67,6 @@ const App = () => {
     setSearch('')
     setCountry(countriesToShow.find(({name}) => name.common === props))
   }
-
-  const showWeather = (props) => {
-    axios
-    .get(`https://api.openweathermap.org/data/2.5/weather?lat=${country.capitalInfo.latlng[0]}&lon=${country.capitalInfo.latlng[1]}&exclude=minutely,hourly,daily,alerts&appid=${api_key}&units=metric`)
-    .then(response => {
-      console.log('Weather promise fulfilled', response.data)
-      setWeather(response.data)
-    })
-  }
-
-
   
   return(
     <div>
